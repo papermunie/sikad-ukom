@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TblUserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +14,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('', function() {
+    return redirect('/login');
 });
+
+Route::get('/login', [TblUserController::class, 'index'])->name('login');
+Route::post('/login', [TblUserController::class, 'login']);
+Route::get('/logout', [TblUserController::class, 'logout'])->name('logout');

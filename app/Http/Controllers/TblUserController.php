@@ -2,64 +2,50 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\tbl_user;
+use App\Http\Requests\UserLoginRequest;
+use App\Models\User;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TblUserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
+    public function __construct()
+    {
+        $this->middleware('guest')->only('index');
+    }
+
     public function index()
     {
-        //
+        if (!Auth::user()) {
+            return view('auth.login');
+        }
+
+        return redirect()->to('/dashboard');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function login(UserLoginRequest $request)
     {
-        //
+        $data = $request->validated();
+
+        if (TblUser::attempt($data)) {
+            $request->session()->regenerate();
+            return TblUser::user();
+        }
+
+        return response()->json([
+            'errors' => [
+                'message' => 'Username or password wrong !'
+            ]
+        ], 401);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function logout()
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(tbl_user $tbl_user)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(tbl_user $tbl_user)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, tbl_user $tbl_user)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(tbl_user $tbl_user)
-    {
-        //
+        TblUser::logout();
+        return redirect('/login');
     }
 }
