@@ -9,18 +9,18 @@ class PemasukanKas extends Model
 {
     use HasFactory;
     public $timestamps = false;
-    protected $table = 'surat';
-    protected $primaryKey = 'id';
-    protected $keyType = 'int';
-    protected $guarded = ['id'];
+    protected $table = 'pemasukan_kas';
+    protected $primaryKey = 'kode_pemasukan';
+    protected $fillable = ['kode_pemasukan', 'email_user', 
+    'id_kategori_pemasukan', 'tanggal_pemasukan', 'jenis_pemasukan'];
 
-    public function jenis()
+    public function kategoripemasukan()
     {
-        return $this->belongsTo(JenisSurat::class, 'id_jenis_surat');
+        return $this->belongsTo(kategoripemasukan::class, 'id_kategori_pemasukan');
     }
 
-    public function user()
+    public function tblUser()
     {
-        return $this->belongsTo(User::class, 'id_user');
+        return $this->belongsTo(tblUserser::class, 'email_user');
     }
 }
