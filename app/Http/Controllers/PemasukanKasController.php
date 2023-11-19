@@ -2,64 +2,74 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\pemasukan_kas;
 use Illuminate\Http\Request;
+use App\Models\PemasukanKas; // Sesuaikan dengan model PemasukanKas Anda
 
 class PemasukanKasController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // Menampilkan semua data kas masuk
     public function index()
     {
-        //
+        $PemasukanKass = PemasukanKas::all();
+        return view('pemasukan.index', compact('PemasukanKass'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    // Menampilkan formulir untuk membuat data kas masuk baru
     public function create()
     {
-        //
+        return view('pemasukan.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // Menyimpan data kas masuk yang baru dibuat
     public function store(Request $request)
     {
-        //
+        // Validasi data input
+        $validatedData = $request->validate([
+            'nama' => 'required',
+            'jumlah' => 'required|numeric',
+            // sesuaikan validasi lainnya sesuai kebutuhan
+        ]);
+
+        // Simpan data ke database
+        PemasukanKas::create($validatedData);
+
+        return redirect()->route('pemasukan.index')->with('success', 'Data kas masuk berhasil ditambahkan!');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(pemasukan_kas $pemasukan_kas)
+    // Menampilkan detail dari sebuah data kas masuk
+    public function show($id)
     {
-        //
+        $PemasukanKas = PemasukanKas::findOrFail($id);
+        return view('pemasukan.show', compact('PemasukanKas'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(pemasukan_kas $pemasukan_kas)
+    // Menampilkan formulir untuk mengedit data kas masuk
+    public function edit($id)
     {
-        //
+        $PemasukanKas = PemasukanKas::findOrFail($id);
+        return view('pemasukan.edit', compact('PemasukanKas'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, pemasukan_kas $pemasukan_kas)
+    // Menyimpan perubahan pada data kas masuk yang sudah diedit
+    public function update(Request $request, $id)
     {
-        //
+        $validatedData = $request->validate([
+            'nama' => 'required',
+            'jumlah' => 'required|numeric',
+            // tambahkan validasi lainnya jika diperlukan
+        ]);
+
+        PemasukanKas::whereId($id)->update($validatedData);
+
+        return redirect()->route('pemasukan.index')->with('success', 'Data kas masuk berhasil diperbarui!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(pemasukan_kas $pemasukan_kas)
+    // Menghapus data kas masuk
+    public function destroy($id)
     {
-        //
+        $PemasukanKas = PemasukanKas::findOrFail($id);
+        $PemasukanKas->delete();
+
+        return redirect()->route('pemasukan.index')->with('success', 'Data kas masuk berhasil dihapus!');
     }
 }

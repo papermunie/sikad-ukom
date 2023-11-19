@@ -2,64 +2,78 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\pengeluaran_kas;
 use Illuminate\Http\Request;
+use App\Models\PengeluaranKas; // Sesuaikan dengan model PengeluaranKas Anda
 
 class PengeluaranKasController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // Menampilkan semua data kas keluar
     public function index()
     {
-        //
+        $PengeluaranKass = PengeluaranKas::all();
+        return view('dashboard.pengeluaran.index', compact('PengeluaranKass'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    // Menampilkan formulir untuk membuat data kas keluar baru
     public function create()
     {
-        //
+        return view('dashboard.pengeluaran.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // Menyimpan data kas keluar yang baru dibuat
     public function store(Request $request)
     {
-        //
+        // Validasi data input
+        $validatedData = $request->validate([
+            'kode_pengeluaran' => 'required|unique:PengeluaranKas', // Memastikan kode pengeluaran unik
+            'email_user' => 'required|exists:users,email', // Memeriksa keberadaan email pada tabel User
+            'id_kategori_pengeluaran' => 'required|exists:kategori_pengeluarans,id', // Memeriksa keberadaan id kategori pada tabel KategoriPengeluaran
+            'tanggal_pengeluaran' => 'required|date',
+            'jumlah_pengeluaran' => 'required|numeric',
+
+            // tambahkan validasi lainnya jika diperlukan
+        ]);
+
+        // Simpan data ke database
+        PengeluaranKas::create($validatedData);
+
+        return redirect()->route('dashboard.pengeluaran.index')->with('success', 'Data kas keluar berhasil ditambahkan!');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(pengeluaran_kas $pengeluaran_kas)
+    // Menampilkan detail dari sebuah data kas keluar
+    public function show($id)
     {
-        //
+        $PengeluaranKas = PengeluaranKas::findOrFail($id);
+        return view('dashboard.pengeluaran.show', compact('PengeluaranKas'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(pengeluaran_kas $pengeluaran_kas)
+    // Menampilkan formulir untuk mengedit data kas keluar
+    public function edit($id)
     {
-        //
+        $PengeluaranKas = PengeluaranKas::findOrFail($id);
+        return view('dashboard.pengeluaran.edit', compact('PengeluaranKas'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, pengeluaran_kas $pengeluaran_kas)
+    // Menyimpan perubahan pada data kas keluar yang sudah diedit
+    public function update(Request $request, $id)
     {
-        //
+        $validatedData = $request->validate([
+            'nama' => 'required',
+            'jumlah' => 'required|numeric',
+            // tambahkan validasi lainnya jika diperlukan
+        ]);
+
+        PengeluaranKas::whereId($id)->update($validatedData);
+
+        return redirect()->route('dashboard.pengeluaran.index')->with('success', 'Data kas keluar berhasil diperbarui!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(pengeluaran_kas $pengeluaran_kas)
+    // Menghapus data kas keluar
+    public function destroy($id)
     {
-        //
+        $PengeluaranKas = PengeluaranKas::findOrFail($id);
+        $PengeluaranKas->delete();
+
+        return redirect()->route('dashboard.pengeluaran.index')->with('success', 'Data kas keluar berhasil dihapus!');
     }
 }

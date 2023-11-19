@@ -2,64 +2,65 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\kategori_pengeluaran;
+use App\Models\KategoriPengeluaran;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class KategoriPengeluaranController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $data = [
+            'jenis_pengeluaran' => KategoriPengeluaran::all()
+        ];
+
+        return view('dashboard.jenis-surat.index', $data);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'jenis_pengeluaran' => ['required', 'max:40']
+        ]);
+
+        if ($data) {
+            if ($request->input('id') !== null) {
+                // TODO: Update Jenis Surat
+                $jenis_pengeluaran = KategoriPengeluaran::query()->find($request->input('id'));
+                $jenis_pengeluaran->fill($data);
+                $jenis_pengeluaran->save();
+
+                return response()->json([
+                    'message' => 'Jenis surat berhasil diupdate!'
+                ], 200);
+            }
+
+            $dataInsert = KategoriPengeluaran::create($data);
+            if ($dataInsert) {
+                return redirect()->to('/dashboard/surat/jenis')->with('success', 'Jenis surat berhasil ditambah');
+            }
+        }
+
+        return redirect()->to('/dashboard/surat/jenis')->with('error', 'Gagal tambah data');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(kategori_pengeluaran $kategori_pengeluaran)
+    public function delete(int $id): JsonResponse
     {
-        //
-    }
+        $jenis_pengeluaran = KategoriPengeluaran::query()->find($id)->delete();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(kategori_pengeluaran $kategori_pengeluaran)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, kategori_pengeluaran $kategori_pengeluaran)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(kategori_pengeluaran $kategori_pengeluaran)
-    {
-        //
+        if ($jenis_pengeluaran):
+            //Pesan Berhasil
+            $pesan = [
+                'success' => true,
+                'pesan' => 'Data user berhasil dihapus'
+            ];
+        else:
+            //Pesan Gagal
+            $pesan = [
+                'success' => false,
+                'pesan' => 'Data gagal dihapus'
+            ];
+        endif;
+        return response()->json($pesan);
     }
 }

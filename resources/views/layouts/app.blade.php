@@ -18,68 +18,101 @@
     <link href="{{asset('css/style.css')}}" rel="stylesheet" type="text/css">
     <link rel="icon" href="{{asset('process.png')}}">
 
-    <style>
-        .navbar .nav-item .nav-link:hover {
-            background-image: linear-gradient(to right, gold, yellow);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent; 
-        }
-    </style>
-
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
-<body class="bg-simple">
-<div id="app">
-    <nav class="navbar navbar-expand-lg navbar-light">
-        <div class="container">
-            <a class="navbar-brand  text-warning fw-bold d-flex align-items-center " href="{{ url('/dashboard') }} ">
-                <!-- <img src="{{asset('mail.png')}}" class="w-25"> -->
-                <h2 class="fw-bold m-0 text-gradient" style="">
-                   sikad bang
-                </h2>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your App</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Custom CSS for Navbar */
+        body {
+            font-family: Arial, sans-serif;
+        }
 
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <!-- Right Side Of Navbar -->
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <!-- Authentication Links -->
-                    @guest
-                        @if (Route::has('login'))
-                            <li class="nav-item text-gradient">
-                                <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                            </li>
-                        @endif
+        .navbar {
+            background-color: #C5C5F1; /* Warna biru pastel */
+            padding: 8px 16px; /* Padding atas dan bawah */
+            position: relative; 
+        }
+        .navbar-nav {
+            width: 100%; /* Mengisi lebar navbar */
+            justify-content: center; /* Membuat seluruh item berada di tengah-tengah */
+            position: relative; 
+        }
+        /* Custom styling for nav links */
+        .navbar-nav .nav-link {
+            padding: 12px 16px; /* Padding atas dan bawah 12px, kiri dan kanan 16px */
+            margin: 0 80px; /* Margin kiri dan kanan 8px */
+        }
 
-                    @else
-                        <li class="nav-item mx-4 d-flex align-items-center">
-                            <h1 class="m-auto mx-2 text-gradient"><i class="bi bi-person"></i></h1>
-                            <div>
-                                <p class="mb-0 fs-5 text-gradient" >{{Auth::user()->username}}</p>
-                                <p class="text-capitalize m-0 text-white">{{Auth::user()->role}}</p>
-                            </div>
+        /* Custom styling for hover effect */
+        .navbar-nav .nav-link:hover {
+            background-color: #A0A0F3; /* Warna hover biru lebih terang */
+            color: black;
+        }
+        .logout-button {
+            background-color: red; /* Warna merah */
+            color: white; /* Warna teks putih */
+            border: none; /* Hapus border */
+            padding: 8px 16px; /* Padding tombol */
+            position: absolute; /* Menjadikan posisi absolut */
+            top: 50%; /* Meletakkan pada posisi vertikal tengah */
+            transform: translateY(-50%); /* Menggeser ke atas sebesar setengah dari tinggi tombol */
+            right: 16px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar Section -->
+    @section('navbar')
+        <!-- Bootstrap Navbar -->
+        <nav class="navbar navbar-expand-lg justify-content-center">
+        <div class="container-fluid justify-content-center">
+                <!-- Navbar brand/logo -->
+                <a class="navbar-brand" href="#">SIKAD</a>
+                
+                <!-- Toggler/collapsing button for small screens -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <!-- Navbar links -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav justify-content-center">
+                        <li class="nav-item justify-content-center">
+                            <a class="nav-link" href="#user">User</a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn logout btn-danger" href="{{ route('logout') }}">{{ __('Logout') }}</a>
+                            <a class="nav-link" href="#pemasukan">Pemasukan</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#pengeluaran">Pengeluaran</a>
                         </li>
-                    @endguest
-                </ul>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#logs">Logs</a>
+                        </li>
+                    </ul>
+                </div>
+                <button class="logout-button">Logout</button>
             </div>
-        </div>
-    </nav>
+    </div>
+        </nav>
+    @show <!-- end of Navbar Section -->
 
-    <main class="py-4 container">
-        @include('layouts.flash-message')
+    <!-- Content Section -->
+    <div id="app">
         @yield('content')
-    </main>
-</div>
+
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 @yield('footer')
 <script>
