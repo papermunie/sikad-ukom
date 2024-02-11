@@ -2,74 +2,118 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PemasukanKas;
 use Illuminate\Http\Request;
-use App\Models\PemasukanKas; // Sesuaikan dengan model PemasukanKas Anda
-
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 class PemasukanKasController extends Controller
 {
-    // Menampilkan semua data kas masuk
-    public function index()
+    public function index(Request $request)
     {
-        $PemasukanKass = PemasukanKas::all();
-        return view('pemasukan.index', compact('PemasukanKass'));
+        $search = $request->input('search');
+        
+        $pemasukan = PemasukanKas::when($search, function ($query) use ($search) {
+                $query->where('kode_pemasukan', 'like', '%' . $search . '%')
+                    ->orWhere('jenis_pemasukan', 'like', '%' . $search . '%')
+                    ->orWhere('tanggal_pemasukan', 'like', '%' . $search . '%')
+                    ->orWhere('jumlah_pemasukan', 'like', '%' . $search . '%');
+            })
+            ->get();
+    
+        return view('pemasukan.index', compact('pemasukan'));
     }
+    
 
-    // Menampilkan formulir untuk membuat data kas masuk baru
     public function create()
     {
         return view('pemasukan.create');
     }
-
-    // Menyimpan data kas masuk yang baru dibuat
     public function store(Request $request)
     {
-        // Validasi data input
+
         $validatedData = $request->validate([
-            'nama' => 'required',
-            'jumlah' => 'required|numeric',
-            // sesuaikan validasi lainnya sesuai kebutuhan
+            'kode_pemasukan' => 'required|unique:pemasukan_kas',
+            'jenis_pemasukan' => 'required|in:Amal Harian,Sumbangan,Infaq',
+            'tanggal_pemasukan' => 'required|date',
+            'jumlah_pemasukan' => 'required',
+            'dokumentasi' => 'file',
         ]);
 
-        // Simpan data ke database
+        if ($request->hasFile('dokumentasi') && $request->file('dokumentasi')->isValid()) {
+            $foto_file = $request->file('dokumentasi');
+
+            // membuat nama file foto nya, dan mengambil extension file foto gambar nya
+            // dan berikan hashing pada file foto nama nya
+            $foto_nama = md5($foto_file->getClientOriginalName() . time()) . '.' . $foto_file->getClientOriginalExtension();
+
+            // kemudian dipindahkan file foto nya dokumentasi ke public path pada direktori dokumentasi
+            $foto_file->move(public_path('dokumentasi'), $foto_nama);
+            $validatedData['dokumentasi'] = $foto_nama;
+        }
+
+        // kemudian simpan ke dalam database
         PemasukanKas::create($validatedData);
 
-        return redirect()->route('pemasukan.index')->with('success', 'Data kas masuk berhasil ditambahkan!');
-    }
 
-    // Menampilkan detail dari sebuah data kas masuk
-    public function show($id)
-    {
-        $PemasukanKas = PemasukanKas::findOrFail($id);
-        return view('pemasukan.show', compact('PemasukanKas'));
+        return redirect()->route('pemasukan.index')->with('success', 'pemasukan berhasil ditambahkan');
     }
-
-    // Menampilkan formulir untuk mengedit data kas masuk
     public function edit($id)
     {
-        $PemasukanKas = PemasukanKas::findOrFail($id);
-        return view('pemasukan.edit', compact('PemasukanKas'));
+        $pemasukan = PemasukanKas::findOrFail($id);
+        return view('pemasukan.edit', ['pemasukan' => $pemasukan]);
     }
 
-    // Menyimpan perubahan pada data kas masuk yang sudah diedit
-    public function update(Request $request, $id)
+
+public function update(Request $request, $id)
     {
+
+        $kode_pemasukan = $request->input('kode_pemasukan');
+
         $validatedData = $request->validate([
-            'nama' => 'required',
-            'jumlah' => 'required|numeric',
-            // tambahkan validasi lainnya jika diperlukan
+            'jenis_pemasukan' => 'required|in:Amal Harian,Sumbangan,Infaq',
+            'tanggal_pemasukan' => 'required|date',
+            'jumlah_pemasukan' => 'required',
+            'dokumentasi' => 'file',
         ]);
 
-        PemasukanKas::whereId($id)->update($validatedData);
+        $pemasukan = PemasukanKas::findOrFail($id);
 
-        return redirect()->route('pemasukan.index')->with('success', 'Data kas masuk berhasil diperbarui!');
+        if ($request->hasFile('dokumentasi')) {
+            $foto_file = $request->file('dokumentasi');
+
+            // mengambil file foto extension nya
+            $foto_extension = $foto_file->getClientOriginalExtension(); 
+
+            // mengambil file file foto name ya, dan memberikan hashing nya
+            $foto_nama = md5($foto_file->getClientOriginalName() . time()) . '.' . $foto_extension;
+            $foto_file->move(public_path('dokumentasi'), $foto_nama);
+
+            // mencari file lama, dengan mengambil dari primary key nya
+            $update_data = PemasukanKas::where('kode_pemasukan', $kode_pemasukan)->first();
+
+            // menghapus file foto yang lama
+            File::delete(public_path('dokumentasi') . '/' . $update_data->file);
+
+            $validatedData['dokumentasi'] = $foto_nama;
+        }
+
+        // Update pemasukan
+        $pemasukan->update($validatedData);
+
+        return redirect()->route('pemasukan.index')->with('success', 'pemasukan berhasil diperbarui');
     }
 
-    // Menghapus data kas masuk
-    public function destroy($id)
+    public function show($id)
+{
+    $pemasukan = PemasukanKas::findOrFail($id);
+    return view('pemasukan.show', ['pemasukan' => $pemasukan]);
+}
+
+public function destroy($id)
     {
-        $PemasukanKas = PemasukanKas::findOrFail($id);
-        $PemasukanKas->delete();
-
-        return redirect()->route('pemasukan.index')->with('success', 'Data kas masuk berhasil dihapus!');
+        $pemasukan = PemasukanKas::findOrFail($id);
+        $pemasukan->delete();
+        return redirect()->route('pemasukan.index')->with('success', 'Pemasukan berhasil dihapus');
     }
+    
 }

@@ -58,13 +58,14 @@
         }
         .logout-button {
             background-color: red; /* Warna merah */
-            color: white; /* Warna teks putih */
+            color: rgb(0, 0, 0); /* Warna teks putih */
             border: none; /* Hapus border */
             padding: 8px 16px; /* Padding tombol */
             position: absolute; /* Menjadikan posisi absolut */
             top: 50%; /* Meletakkan pada posisi vertikal tengah */
             transform: translateY(-50%); /* Menggeser ke atas sebesar setengah dari tinggi tombol */
             right: 16px;
+            text-decoration: none;
         }
     </style>
 </head>
@@ -75,7 +76,7 @@
         <nav class="navbar navbar-expand-lg justify-content-center">
         <div class="container-fluid justify-content-center">
                 <!-- Navbar brand/logo -->
-                <a class="navbar-brand" href="#">SIKAD</a>
+                <a class="navbar-brand" href="{{ route('home.index') }}">SIKAD</a>
                 
                 <!-- Toggler/collapsing button for small screens -->
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -86,20 +87,20 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav justify-content-center">
                         <li class="nav-item justify-content-center">
-                            <a class="nav-link" href="#user">User</a>
+                          <b>  <a class="nav-link" href="{{ route('users.index') }}">User</a></b>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#pemasukan">Pemasukan</a>
+                           <b> <a class="nav-link" href="{{ route('pemasukan.index') }}">Pemasukan</a> </b>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#pengeluaran">Pengeluaran</a>
+                         <b>   <a class="nav-link" href="{{ route('pengeluaran.index') }}">Pengeluaran</a></b>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#logs">Logs</a>
+                           <b> <a class="nav-link" href="{{ route('log.index') }}">Logs</a></b>
                         </li>
                     </ul>
                 </div>
-                <button class="logout-button">Logout</button>
+               <b> <button class="logout-button"><a href="{{ route('logout') }}" style="color:rgb(0, 0, 0); text-decoration: none;">Logout</a></button> </b>
             </div>
     </div>
         </nav>
@@ -116,11 +117,11 @@
 
 @yield('footer')
 <script>
-    window.setTimeout(function () {
-        $(".alert").fadeTo(500, 0).slideUp(500, function () {
-            $(this).remove();
-        });
-    }, 3000);
+    // window.setTimeout(function () {
+    //     $(".alert").fadeTo(500, 0).slideUp(500, function () {
+    //         $(this).remove();
+    //     });
+    // }, 3000);
 </script>
 </body>
 </html>

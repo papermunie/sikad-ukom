@@ -8,19 +8,24 @@ use Illuminate\Database\Eloquent\Model;
 class PengeluaranKas extends Model
 {
     use HasFactory;
-    public $timestamps = false;
+
     protected $table = 'pengeluaran_kas';
+
     protected $primaryKey = 'kode_pengeluaran';
-    protected $fillable = ['kode_pengeluaran', 'email_user', 
-    'id_kategori_pengeluaran', 'tanggal_pengeluaran', 'jenis_pengeluaran'];
 
-    public function kategoriPengeluaran()
-    {
-        return $this->belongsTo(kategoriPengeluaran::class, 'id_kategori_pengeluaran');
-    }
+    protected $keyType = 'string';
 
-    public function tblUser()
-    {
-        return $this->belongsTo(tblUserser::class, 'email_user');
-    }
+    public $incrementing = false;
+
+    protected $fillable = [
+        'kode_pengeluaran',
+        'jenis_pengeluaran',
+        'tanggal_pengeluaran',
+        'jumlah_pengeluaran',
+        'dokumentasi',
+    ];
+
+    protected $casts = [
+        'tanggal_pengeluaran' => 'date',
+    ];
 }

@@ -8,19 +8,24 @@ use Illuminate\Database\Eloquent\Model;
 class PemasukanKas extends Model
 {
     use HasFactory;
-    public $timestamps = false;
+
     protected $table = 'pemasukan_kas';
+
     protected $primaryKey = 'kode_pemasukan';
-    protected $fillable = ['kode_pemasukan', 'email_user', 
-    'id_kategori_pemasukan', 'tanggal_pemasukan', 'jenis_pemasukan'];
 
-    public function kategoripemasukan()
-    {
-        return $this->belongsTo(kategoripemasukan::class, 'id_kategori_pemasukan');
-    }
+    protected $keyType = 'string';
 
-    public function tblUser()
-    {
-        return $this->belongsTo(tblUserser::class, 'email_user');
-    }
+    public $incrementing = false;
+
+    protected $fillable = [
+        'kode_pemasukan',
+        'jenis_pemasukan',
+        'tanggal_pemasukan',
+        'jumlah_pemasukan',
+        'dokumentasi',
+    ];
+
+    protected $casts = [
+        'tanggal_pemasukan' => 'date',
+    ];
 }

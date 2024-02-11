@@ -137,4 +137,7 @@
             </div>
         </div>
     </body>
+
+    <a href="{{ route('dashboard') }}" class="btn btn-primary" style="background-color: white; color: black;">DASHBOARD</a>
+
 </html>

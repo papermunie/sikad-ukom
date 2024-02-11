@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('tbl_user', function (Blueprint $table) {
             $table->string('email_user',50)->nullable(false)->primary();
             $table->text('password')->nullable(false);
-            $table->string('foto_profil',225)->nullable(false);
-            $table->enum('role', ['Ketua DKM', 'Bendahara', 'Warga Sekolah']);
+            $table->longText('foto_profil',225)->nullable(false);
+            $table->enum('role', ['ketua_dkm', 'bendahara', 'warga_sekolah']);
             $table->timestamps();
         }); 
     }

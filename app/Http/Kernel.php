@@ -2,6 +2,10 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\isBendahara;
+use App\Http\Middleware\isDkmOrBendahara;
+use App\Http\Middleware\isKetuaDkm;
+use App\Http\Middleware\isPengunjung;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -40,7 +44,7 @@ class Kernel extends HttpKernel
 
         'api' => [
             // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
+            \Illuminate\Routing\Middleware\ThrottleRequests::class . ':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
     ];
@@ -64,5 +68,9 @@ class Kernel extends HttpKernel
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        "isBendahara" => isBendahara::class,
+        "isPengunjung" => isPengunjung::class,
+        "isKetuaDkm" => isKetuaDkm::class,
+        "KetuaDkmOrBendahara" => isDkmOrBendahara::class
     ];
 }

@@ -9,17 +9,20 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-        Schema::create('log', function (Blueprint $table) {
-            $table->id();
-            $table->string('username');
-            $table->enum('action', ['INSERT', 'UPDATE', 'DELETE']);
-            $table->text('log');
-            $table->dateTime('created_at')->useCurrent();
-        });
-    }
-
+    
+    public function up()
+{
+    Schema::create('activity_logs', function (Blueprint $table) {
+        $table->id();
+        $table->unsignedBigInteger('email_user');
+        $table->unsignedBigInteger('id_surat');
+        $table->string('jenis_transaksi');
+        $table->timestamp('tanggal_transaksi');
+        $table->text('ringkasan');
+        $table->string('file')->nullable();
+        $table->timestamps();
+    });
+}
     /**
      * Reverse the migrations.
      */
