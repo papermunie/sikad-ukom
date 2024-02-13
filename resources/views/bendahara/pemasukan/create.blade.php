@@ -38,13 +38,7 @@
                 <input type="text" class="form-control" aria-label="Username" aria-describedby="basic-addon1"
                     name="jumlah_pemasukan">
             </div>
-
         </div>
-
-        {{-- arahan dari sopi --}}
-        <label>Foto</label>
-        <input type="file" class="form-control mb-3" id="Foto" name="dokumentasi" required>
-
         <button type="submit" class="btn btn-primary">Tambah Data</button>
     </form>
     @endsection

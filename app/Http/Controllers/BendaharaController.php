@@ -6,7 +6,7 @@ use App\Models\PemasukanKas;
 use App\Models\PengeluaranKas;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-//use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
@@ -30,7 +30,7 @@ class BendaharaController extends Controller
     public function bendaharalogin_action(Request $request)
     {
         $request->validate([
-            'email_user' => 'required|email',
+            'email_user' => 'required',
             'password' => 'required',
         ]);
     
@@ -146,9 +146,8 @@ class BendaharaController extends Controller
     public function pemasukanupdate(Request $request, $id)
         {
     
-            $kode_pemasukan = $request->input('kode_pemasukan');
-    
             $validatedData = $request->validate([
+                'kode_pemasukan' => 'required',
                 'jenis_pemasukan' => 'required|in:Amal Harian,Sumbangan,Infaq',
                 'tanggal_pemasukan' => 'required|date',
                 'jumlah_pemasukan' => 'required',
@@ -224,27 +223,11 @@ class BendaharaController extends Controller
             'jenis_pengeluaran' => 'required',
             'tanggal_pengeluaran' => 'required|date',
             'jumlah_pengeluaran' => 'required',
-            'dokumentasi' => 'required',
         ]);
 
-        // dd($validatedData);
-
-
-        if ($request->hasFile('dokumentasi') && $request->file('dokumentasi')->isValid()) {
-            $foto_file = $request->file('dokumentasi');
-
-            // membuat nama file foto nya, dan mengambil extension file foto gambar nya
-            // dan berikan hashing pada file foto nama nya
-            $foto_nama = md5($foto_file->getClientOriginalName() . time()) . '.' . $foto_file->getClientOriginalExtension();
-
-            // kemudian dipindahkan file foto nya dokumentasi ke public path pada direktori dokumentasi
-            $foto_file->move(public_path('dokumentasi'), $foto_nama);
-            $validatedData['dokumentasi'] = $foto_nama;
-        }
-
         // kemudian simpan ke dalam database
-        $d = PengeluaranKas::create($validatedData);
-        
+        PengeluaranKas::create($validatedData);
+
 
         return redirect()->route('bendahara.pengeluaran.index')->with('success', 'pengeluaran berhasil ditambahkan');
     }
@@ -258,13 +241,12 @@ class BendaharaController extends Controller
 public function pengeluaranupdate(Request $request, $id)
     {
 
-        $kode_pengeluaran = $request->input('kode_pengeluaran');
-
+    
         $validatedData = $request->validate([
+            'kode_pengeluaran' => 'required',
             'jenis_pengeluaran' => 'required',
             'tanggal_pengeluaran' => 'required|date',
             'jumlah_pengeluaran' => 'required',
-            'dokumentasi' => 'file',
         ]);
 
         $pengeluaran = PengeluaranKas::findOrFail($id);
@@ -281,11 +263,6 @@ public function pengeluaranupdate(Request $request, $id)
 
             // mencari file lama, dengan mengambil dari primary key nya
             $update_data = PengeluaranKas::where('kode_pengeluaran', $kode_pengeluaran)->first();
-
-            // menghapus file foto yang lama
-            File::delete(public_path('dokumentasi') . '/' . $update_data->file);
-
-            $validatedData['dokumentasi'] = $foto_nama;
         }
 
         // Update pengeluaran

@@ -15,7 +15,11 @@
             {{-- @method('PUT') --}}
             <div class="mb-3">
                 <label for="email_user" class="form-label">Email:</label>
+                <div class="input-group mb-3">
                 <input type="text" class="form-control" id="email_user" name="email_user" value="{{ $user->email_user }}" required>
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">@gmail.com</span>
+                </div>
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Password:</label>

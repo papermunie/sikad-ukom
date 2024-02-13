@@ -28,4 +28,5 @@ class PemasukanKas extends Model
     protected $casts = [
         'tanggal_pemasukan' => 'date',
     ];
+    
 }

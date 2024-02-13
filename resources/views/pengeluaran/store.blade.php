@@ -17,11 +17,7 @@
         </div>
         <div class="mb-3">
             <label for="jenis_pengeluaran" class="form-label">Jenis Pengeluaran:</label>
-            <select class="form-select" id="jenis_pengeluaran" name="jenis_pengeluaran" required>
-                <option value="Amal Harian">Amal Harian</option>
-                <option value="Sumbangan">Sumbangan</option>
-                <option value="Infaq">Infaq</option>
-            </select>
+            <input type="string" class="form-control" id="jenis_pengeluaran" name="jenis_pengeluaran" required>
         </div>
         <div class="mb-3">
             <label for="tanggal_pengeluaran" class="form-label">Tanggal Pengeluaran:</label>

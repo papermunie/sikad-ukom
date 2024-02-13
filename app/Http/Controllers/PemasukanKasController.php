@@ -67,9 +67,10 @@ class PemasukanKasController extends Controller
 public function update(Request $request, $id)
     {
 
-        $kode_pemasukan = $request->input('kode_pemasukan');
+        // $kode_pemasukan = $request->input('kode_pemasukan');
 
         $validatedData = $request->validate([
+            'kode_pemasukan' => 'required',
             'jenis_pemasukan' => 'required|in:Amal Harian,Sumbangan,Infaq',
             'tanggal_pemasukan' => 'required|date',
             'jumlah_pemasukan' => 'required',

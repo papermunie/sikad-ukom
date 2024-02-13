@@ -40,7 +40,7 @@
             </div>
 
             <div class="col-md-4">
-            <a href="{{ route('user.register') }}" style="text-decoration: none;">
+            <a href="{{ route('pengunjung.register') }}" style="text-decoration: none;">
                 <div class="card text-dark" style="background-color: #C5C5F1; text-align: center;">
                     <div class="card-header">WARGA SEKOLAH</div>
                     <div class="card-body">

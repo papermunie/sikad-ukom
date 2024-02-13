@@ -42,7 +42,7 @@
 
         </div>
 
-        {{-- arahan dari sopi --}}
+        {{-- dokumentasi --}}
         <label>Foto</label>
         <input type="file" class="form-control mb-3" id="Foto" name="dokumentasi" required>
 

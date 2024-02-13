@@ -22,17 +22,26 @@
         </thead>
         <tbody>
             @php
+            $count = 1;
+            // Array untuk mapping role dari database ke format yang diinginkan di tampilan
+            $roleLabels = [
+                'ketua_dkm' => 'Ketua DKM',
+                'bendahara' => 'Bendahara',
+                'warga_sekolah' => 'Warga Sekolah'
+            ];
+        @endphp  
+            @php
                 $count = 1;
             @endphp
             @foreach($users as $user)
                 <tr class="text-center {{ $count % 2 == 0 ? 'table-primary' : '' }}">
                     <td class="align-middle">{{ $loop->iteration }}</td>
-                    <td class="align-middle">{{ $user->email_user }}</td>
+                    <td class="align-middle">{{ $user->email_user }}@gmail.com</td>
                     <td>
                         <img src="{{ url('foto_profil') . '/' . $user->foto_profil }} "
                             style="width: 200px; height: 250px;" alt="foto_profil" />
                     </td>
-                    <td class="align-middle">{{ $user->role }}</td>
+                    <td class="align-middle">{{ $roleLabels[$user->role] }}</td> <!-- Menggunakan mapping role -->
                     <td class="align-middle">
                         <a href="{{ route('users.edit', $user->email_user) }}" class="btn btn-primary btn-sm">Edit</a>
                         <a href="{{ route('users.show', $user->email_user) }}" class="btn btn-info btn-sm">Detail</a>

@@ -5,7 +5,7 @@
 @section('content')
 <div class="container mt-5">
     <h1 class="mb-4">Tambah Pengeluaran Kas</h1>
-    <form action="{{ route('bendahara.pengeluaran.store') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('pengeluaran_kas.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="mb-3">
             <label for="kode_pengeluaran" class="form-label">Kode Pengeluaran:</label>
@@ -17,11 +17,7 @@
         </div>
         <div class="mb-3">
             <label for="jenis_pengeluaran" class="form-label">Jenis Pengeluaran:</label>
-            <select class="form-select" id="jenis_pengeluaran" name="jenis_pengeluaran" required>
-                <option value="Amal Harian">Amal Harian</option>
-                <option value="Sumbangan">Sumbangan</option>
-                <option value="Infaq">Infaq</option>
-            </select>
+            <input type="string" class="form-control" id="jenis_pengeluaran" name="jenis_pengeluaran" required>
         </div>
         <div class="mb-3">
             <label for="tanggal_pengeluaran" class="form-label">Tanggal Pengeluaran:</label>
@@ -30,10 +26,6 @@
         <div class="mb-3">
             <label for="jumlah_pengeluaran" class="form-label">Jumlah Pengeluaran:</label>
             <input type="text" class="form-control" id="jumlah_pengeluaran" name="jumlah_pengeluaran" required>
-        </div>
-        <div class="mb-3">
-            <label for="dokumentasi" class="form-label">Dokumentasi:</label>
-            <input type="file" class="form-control" id="dokumentasi" name="dokumentasi">
         </div>
         <button type="submit" class="btn btn-primary">Simpan</button>
     </form>

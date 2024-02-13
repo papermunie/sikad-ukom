@@ -11,7 +11,7 @@
             <div class="mb-3">
                 <label for="kode_pemasukan" class="form-label">Kode pemasukan</label>
                 <input type="text" class="form-control" id="kode_pemasukan" name="kode_pemasukan"
-                    value="{{ $pemasukan->kode_pemasukan }}" required readonly>
+                    value="{{ $pemasukan->kode_pemasukan }}" required>
             </div>
             <div class="mb-3">
                 <label for="jenis_pemasukan" class="form-label">Jenis pemasukan</label>

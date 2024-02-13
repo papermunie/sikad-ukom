@@ -20,7 +20,7 @@ class AuthController extends Controller
     public function register_action(Request $request)
     {
         $request->validate([
-            'email_user' => 'required|email|unique:tbl_user',
+            'email_user' => 'required|unique:tbl_user',
             'password' => 'required',
             'foto_profil' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'role' => ['required', Rule::in(['ketua_dkm', 'bendahara', 'warga_sekolah'])],
@@ -56,7 +56,7 @@ class AuthController extends Controller
     public function login_action(Request $request)
     {
         $request->validate([
-            'email_user' => 'required|email',
+            'email_user' => 'required',
             'password' => 'required',
         ]);
     

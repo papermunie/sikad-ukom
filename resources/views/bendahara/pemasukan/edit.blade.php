@@ -11,7 +11,7 @@
             <div class="mb-3">
                 <label for="kode_pemasukan" class="form-label">Kode pemasukan</label>
                 <input type="text" class="form-control" id="kode_pemasukan" name="kode_pemasukan"
-                    value="{{ $pemasukan->kode_pemasukan }}" required readonly>
+                    value="{{ $pemasukan->kode_pemasukan }}" required>
             </div>
             <div class="mb-3">
                 <label for="jenis_pemasukan" class="form-label">Jenis pemasukan</label>
@@ -30,13 +30,6 @@
                 <label for="jumlah_pemasukan" class="form-label">Jumlah pemasukan</label>
                 <input type="text" class="form-control" id="jumlah_pemasukan" name="jumlah_pemasukan"
                     value="{{ $pemasukan->jumlah_pemasukan }}" required>
-            </div>
-            <div class="mb-3">
-                <label for="dokumentasi" class="form-label">Dokumentasi</label>
-                <br>
-                <img src="{{ url('dokumentasi') . '/' . $pemasukan->dokumentasi }} " style="width: 200px; height: 250px;"
-                    alt="Profile" />
-                <input type="file" name="dokumentasi" id="dokumentasi" class="form-control mt-3">
             </div>
             <button type="submit" class="btn btn-primary">Simpan</button>
             <a href="{{ route('bendahara.pemasukan.index') }}" class="btn btn-secondary">Batal</a>

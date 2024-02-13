@@ -76,6 +76,7 @@ Route::post('/bendahara/password', [BendaharaController::class, 'bendaharapasswo
 
 // Route for logging out
 Route::get('/bendahara/logout', [BendaharaController::class, 'bendaharalogout'])->name('bendahara.logout');
+Route::get('/bendahara', [BendaharaController::class, 'pemasukanindex'])->name('bendahara.pemasukan.index');
 Route::get('/bendahara/pemasukan', [BendaharaController::class, 'pemasukanindex'])->name('bendahara.pemasukan.index');
 Route::get('/bendahara/pemasukan/create', [BendaharaController::class, 'pemasukancreate'])->name('bendahara.pemasukan.create');
 Route::post('/bendahara/pemasukan/store', [BendaharaController::class, 'pemasukanstore'])->name('bendahara.pemasukan.store');
@@ -90,6 +91,18 @@ Route::get('/bendahara/pengeluaran/{id}/edit', [BendaharaController::class, 'pen
 Route::put('/bendahara/pengeluaran/{id}/update', [BendaharaController::class, 'pengeluaranupdate'])->name('bendahara.pengeluaran.update');
 Route::get('/bendahara/pengeluaran/{id}/show', [BendaharaController::class, 'pengeluaranshow'])->name('bendahara.pengeluaran.show');
 Route::delete('/bendahara/pengeluaran/{id}/destroy', [BendaharaController::class, 'pengeluarandestroy'])->name('bendahara.pengeluaran.destroy');
+/* --------------------------------- WARGA SEKOLAH --------------------------------- */
+
+Route::get('/pengunjung/register', [PengunjungController::class, 'pengunjungregister'])->name('pengunjung.register');
+Route::post('/pengunjung/register', [PengunjungController::class, 'pengunjungregister_action'])->name('pengunjung.register.action');
+
+Route::get('/pengunjung/login', [PengunjungController::class, 'pengunjunglogin'])->name('pengunjung.login');
+Route::post('/pengunjung/login', [PengunjungController::class, 'pengunjunglogin_action'])->name('pengunjung.login.action');
+
+Route::get('/pengunjung/password', [PengunjungController::class, 'pengunjungpassword'])->name('pengunjung.password');
+Route::post('/pengunjung/password', [PengunjungController::class, 'pengunjungpassword_action'])->name('pengunjung.password.action');
+
+Route::post('/pengunjung/logout', [PengunjungController::class, 'pengunjunglogout'])->name('pengunjung.logout');
 
 /* ------------------------------- MIDDLEWARE ------------------------------- */
 Route::prefix('/')->middleware('auth')->group(function () {
@@ -111,8 +124,7 @@ Route::prefix('/')->middleware('auth')->group(function () {
     Route::middleware(['isBendahara'])->group(function () {
 
       Route::get('/bendahara', [BendaharaController::class, 'pemasukanindex'])->name('bendahara.pemasukan.index');
-      // Route::get('/bendahara', [BendaharaController::class, 'pengeluaranindex'])->name('bendahara.pengeluaran.index');
-
+      // return view('bendahara.login', $data);
     });
 
     /* ---------------------- UNTUK KETUA DKM DAN BENDAHARA --------------------- */
@@ -136,7 +148,7 @@ Route::prefix('/')->middleware('auth')->group(function () {
       Route::delete('/pemasukan/{id}', [PemasukanKasController::class, 'destroy'])->name('pemasukan.destroy');
 
       /* Log */
-      Route::get('/logs', [ActivityLogController::class, 'index'])->name('log.index');
+      Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity_logs.index');
     });
 
     /* ------------------------------- PENGUNJUNG ------------------------------- */
@@ -149,33 +161,6 @@ Route::prefix('/')->middleware('auth')->group(function () {
   });
 });
 
-// /* User */
-// Route::get('/users', [UserController::class, 'index'])->name('users.index');
-// Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
-// Route::post('/users/store', [UserController::class, 'store'])->name('users.store');
-// Route::get('/users/edit/{id}', [UserController::class, 'edit'])->name('users.edit');
-
-// // Route::get('/users/edit/{email_user}', [UserController::class, 'edit'])->name('users.edit');
-// Route::get('/users/show/{email_user}', [UserController::class, 'show'])->name('users.show');
-// Route::put('/users/update/{email_user}', [UserController::class, 'update'])->name('users.update');
-// Route::delete('/users/destroy/{email_user}', [UserController::class, 'destroy'])->name('users.destroy');
-
-
-/* Log */
-// Route::get('/logs', [ActivityLogController::class, 'index'])->name('log.index');
-
-//  /* bendahara */
-//  Route::get('/bendahara', [BendaharaController::class, 'index'])->name('bendahara.index');
-
-// /* pengunjung */
-// Route::get('/pengunjung', [PengunjungController::class, 'index'])->name('pengunjung.pengunjung');
-// Route::get('/laporan', [PengunjungController::class, 'laporan'])->name('laporan.index');
-// Route::get('/laporanmasuk', [PengunjungController::class, 'laporanmasuk'])->name('pengunjung.laporanmasuk');
-// Route::get('/laporankeluar', [PengunjungController::class, 'laporankeluar'])->name('pengunjung.laporankeluar');
-
-// Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity_logs.index');
-
-
-// Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity_logs.index');
-
-
+// store prosedure
+Route::get("list-tbluser", [HomeController::class, "ListTblUser"]);
+Route::get("get-tbluser/{id}", [HomeController::class, "singleTblUser"]);

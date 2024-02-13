@@ -37,7 +37,7 @@
 
         .navbar {
             background-color: #C5C5F1; /* Warna biru pastel */
-            padding: 8px 16px; /* Padding atas dan bawah */
+            padding: 2px 16px; /* Padding atas dan bawah */
             position: relative; 
         }
         .navbar-nav {
@@ -45,26 +45,27 @@
             justify-content: center; /* Membuat seluruh item berada di tengah-tengah */
             position: relative; 
         }
-        /* Custom styling for nav links */
+
         .navbar-nav .nav-link {
-            padding: 12px 16px; /* Padding atas dan bawah 12px, kiri dan kanan 16px */
-            margin: 0 80px; /* Margin kiri dan kanan 8px */
+            padding: 12px 16px; 
+            margin: 0 80px;
         }
 
-        /* Custom styling for hover effect */
         .navbar-nav .nav-link:hover {
-            background-color: #A0A0F3; /* Warna hover biru lebih terang */
+            background-color: #A0A0F3; 
             color: black;
         }
         .logout-button {
-            background-color: red; /* Warna merah */
-            color: white; /* Warna teks putih */
-            border: none; /* Hapus border */
-            padding: 8px 16px; /* Padding tombol */
-            position: absolute; /* Menjadikan posisi absolut */
-            top: 50%; /* Meletakkan pada posisi vertikal tengah */
-            transform: translateY(-50%); /* Menggeser ke atas sebesar setengah dari tinggi tombol */
+            background-color: red;
+            color: rgb(0, 0, 0); 
+            border: none; 
+            padding: 8px 16px; 
+            position: absolute; 
+            margin-top: 0px;
+            margin-bottom:0px 
+            transform: translateY(-50%);
             right: 16px;
+
         }
     </style>
 </head>
@@ -92,33 +93,56 @@
                         <li class="nav-item">
                          <b>   <a class="nav-link" href="{{ route('bendahara.pengeluaran.index') }}">Pengeluaran</a></b>
                         </li>
-                        <li class="nav-item">
-                           <b> <a class="nav-link" href="{{ route('log.index') }}">Logs</a></b>
+                        <li class="nav-item"> 
+                            <li> <b> <a class="nav-link" href="{{ route('activity_logs.index') }}">Logs</a></b>
                         </li>
                     </ul>
+                    @if(Auth::check()) <!-- Cek apakah pengguna sedang login -->
+    <span class="navbar-text" style="display: flex; align-items: center;">
+        <img src="{{ asset('user.png') }}" width='50px' style="margin-right: 10px;">
+        <b>
+            @php
+                $role = Auth::user()->role; // Ambil nilai peran pengguna
+                switch($role) {
+                    case 'ketua_dkm':
+                        echo 'Ketua DKM';
+                        break;
+                    case 'bendahara':
+                        echo 'Bendahara';
+                        break;
+                    case 'warga_sekolah':
+                        echo 'Warga Sekolah';
+                        break;
+                    default:
+                        echo $role; // Jika tidak cocok, tampilkan nilai peran langsung
+                        break;
+                }
+            @endphp
+        </b>
+    </span>
+@endif
+            </nav>
+<!-- Memindahkan tombol logout ke bawah navbar -->
+<div class="d-flex justify-content-center" style="margin-top: 10px;">
+    <b> <button class="logout-button"><a href="{{ route('logout') }}" style="color:rgb(0, 0, 0); text-decoration: none;">Logout</a></button> </b>
+</div>
+
                 </div>
-                <b> <button class="logout-button"><a href="{{ route('bendahara.logout') }}" style="color:rgb(0, 0, 0); text-decoration: none;">Logout</a></button> </b>
+            
             </div>
     </div>
-        </nav>
-    @show <!-- end of Navbar Section -->
+        
+    @show 
 
-    <!-- Content Section -->
     <div id="app">
         @yield('content')
 
     </div>
 
-    <!-- Bootstrap JS and dependencies -->
+   
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 @yield('footer')
-<script>
-    // window.setTimeout(function () {
-    //     $(".alert").fadeTo(500, 0).slideUp(500, function () {
-    //         $(this).remove();
-    //     });
-    // }, 3000);
-</script>
+
 </body>
 </html>

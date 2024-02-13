@@ -10,9 +10,7 @@
                 <p class="card-text">Jenis pengeluaran: {{ $pengeluaran->jenis_pengeluaran }}</p>
                 <p class="card-text">Tanggal pengeluaran: {{ $pengeluaran->tanggal_pengeluaran->format('Y-m-d') }}</p>
                 <p class="card-text">Jumlah pengeluaran: {{ $pengeluaran->jumlah_pengeluaran }}</p>
-                <p class="card-text">Dokumentasi: @foreach(explode(',', $pengeluaran->dokumentasi) as $image)
-                    <img src="{{ asset('dokumentasi/' . $image) }}" alt="Dokumentasi" class="img-fluid" style="width: 600px">
-                @endforeach</p>
+                </p>
                 <a href="{{ route('bendahara.pengeluaran.index') }}" class="btn btn-primary">Kembali</a>
             </div>
         </div>

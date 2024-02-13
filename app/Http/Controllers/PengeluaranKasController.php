@@ -28,6 +28,7 @@ class PengeluaranKasController extends Controller
     {
         return view('pengeluaran.create');
     }
+  
     public function store(Request $request)
     {
 
@@ -67,9 +68,10 @@ class PengeluaranKasController extends Controller
 public function update(Request $request, $id)
     {
 
-        $kode_pengeluaran = $request->input('kode_pengeluaran');
+        // $kode_pengeluaran = $request->input('kode_pengeluaran');
 
         $validatedData = $request->validate([
+            'kode_pengeluaran' => 'required',
             'jenis_pengeluaran' => 'required',
             'tanggal_pengeluaran' => 'required|date',
             'jumlah_pengeluaran' => 'required',
@@ -79,29 +81,33 @@ public function update(Request $request, $id)
         $pengeluaran = PengeluaranKas::findOrFail($id);
 
         if ($request->hasFile('dokumentasi')) {
+            // Memproses unggahan file
             $foto_file = $request->file('dokumentasi');
-
-            // mengambil file foto extension nya
-            $foto_extension = $foto_file->getClientOriginalExtension(); 
-
-            // mengambil file file foto name ya, dan memberikan hashing nya
+        
+            // Memeriksa apakah file sebelumnya ada
+            if ($pengeluaran->dokumentasi) {
+                // Menghapus file lama jika ada
+                File::delete(public_path('dokumentasi') . '/' . $pengeluaran->dokumentasi);
+            }
+        
+            // Proses penyimpanan file baru
+            $foto_extension = $foto_file->getClientOriginalExtension();
             $foto_nama = md5($foto_file->getClientOriginalName() . time()) . '.' . $foto_extension;
             $foto_file->move(public_path('dokumentasi'), $foto_nama);
-
-            // mencari file lama, dengan mengambil dari primary key nya
-            $update_data = PengeluaranKas::where('kode_pengeluaran', $kode_pengeluaran)->first();
-
-            // menghapus file foto yang lama
-            File::delete(public_path('dokumentasi') . '/' . $update_data->file);
-
+        
+            // Menyimpan nama file baru ke dalam data yang divalidasi
             $validatedData['dokumentasi'] = $foto_nama;
+        } else {
+            // Jika tidak ada file yang diunggah, tetap gunakan nilai lama dari database
+            $validatedData['dokumentasi'] = $pengeluaran->dokumentasi;
         }
-
+        
         // Update pengeluaran
         $pengeluaran->update($validatedData);
 
         return redirect()->route('pengeluaran.index')->with('success', 'pengeluaran berhasil diperbarui');
     }
+
 
     public function show($id)
 {

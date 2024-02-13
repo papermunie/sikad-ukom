@@ -30,10 +30,6 @@
             <label for="jumlah_pemasukan" class="form-label">Jumlah pemasukan:</label>
             <input type="text" class="form-control" id="jumlah_pemasukan" name="jumlah_pemasukan" required>
         </div>
-        <div class="mb-3">
-            <label for="dokumentasi" class="form-label">Dokumentasi:</label>
-            <input type="file" class="form-control" id="dokumentasi" name="dokumentasi">
-        </div>
         <button type="submit" class="btn btn-primary">Simpan</button>
     </form>
 </div>
