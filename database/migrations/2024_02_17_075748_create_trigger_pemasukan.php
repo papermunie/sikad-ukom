@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -11,10 +12,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kategori_pengeluaran', function (Blueprint $table) {
-            $table->char('id_kategori_pengeluaran', 5)->primary();
-            $table->string('jenis_pengeluaran', 40);
-        });
+        DB::unprepared('
+            CREATE TRIGGER before_pemasukan_insert
+            BEFORE INSERT ON pemasukan_kas
+            FOR EACH ROW
+            BEGIN
+                SET NEW.created_at = NOW();
+            END
+        ');
     }
 
     /**
@@ -22,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kategori_pengeluaran');
+        DB::unprepared('DROP TRIGGER IF EXISTS before_pemasukan_insert');
     }
 };

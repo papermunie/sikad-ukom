@@ -1,43 +1,36 @@
-<!-- resources/views/kategori_pengeluaran/index.blade.php -->
-
 @extends('layouts.app')
 
 @section('content')
-    <div class="container">
-        <h2>Daftar Kategori Pengeluaran</h2>
 
-        <a href="{{ route('kategori-pengeluaran.create') }}" class="btn btn-success mb-2">Tambah Kategori</a>
-
-        @if(session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
+<style>
+    .vertical-center {
+        min-height: 75vh;
+        max-width: 105vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center; 
+    }
+</style>
+<div class="container mx-auto my-5 vertical-center"> <!-- Gunakan class vertical-center yang telah ditambahkan -->
+        <div class="row d-flex justify-content-center">
+            <div class="col-md-5 mb-4">
+            <a href="{{ route('pengeluaran.index') }}" class="text-decoration-none">
+                <div class="card text-dark" style="background-color: #C5C5F1; text-align: center;">
+                    <div class="card-header">
+                        <b>LAPORAN PENGELUARAN KAS</b>
+                    </div>
+                </div>
+                </a>
             </div>
-        @endif
 
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Jenis Pengeluaran</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($kategoriPengeluarans as $kategori)
-                    <tr>
-                        <td>{{ $kategori->id }}</td>
-                        <td>{{ $kategori->jenis_pengeluaran }}</td>
-                        <td>
-                            <a href="{{ route('kategori-pengeluaran.edit', $kategori->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                            <form action="{{ route('kategori-pengeluaran.destroy', $kategori->id) }}" method="POST" style="display: inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus kategori ini?')">Hapus</button>
-                            </form>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
+            <div class="col-md-5 mb-4">
+            <a href="{{ route('kategori_pengeluaran.jenis_pengeluaran') }}" class="text-decoration-none">
+                <div class="card text-dark" style="background-color: #C5C5F1; text-align: center;">
+                    <div class="card-header"><b>JENIS PENGELUARAN KAS</b></div>
+                </div>
+            </div>
+            </a>
+        </div>
+</div>
+
 @endsection

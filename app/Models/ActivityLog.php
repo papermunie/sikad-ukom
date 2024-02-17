@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ActivityLog extends Model
 {
-    protected $fillable = ['entity', 'entity_id', 'action'];
+    protected $fillable = ['auth','entity', 'entity_id', 'action'];
 
     // Format tanggal untuk ditampilkan
     protected $dates = ['created_at', 'updated_at'];
@@ -14,7 +14,7 @@ class ActivityLog extends Model
     // Relasi polimorfik untuk menghubungkan dengan entitas lain jika diperlukan
     public function subject()
     {
-        return $this->morphTo('entity', 'entity_id');
+        return $this->morphTo('auth', 'entity', 'entity_id');
     }
 
     // Metode untuk mendapatkan entitas terkait sebagai string

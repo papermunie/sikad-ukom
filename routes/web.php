@@ -11,6 +11,8 @@ use App\Http\Controllers\ImageController;
 use App\Http\Controllers\LogController;
 use App\Http\Controllers\PengunjungController;
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\KategoriPemasukanController;
+use App\Http\Controllers\KategoriPengeluaranController;
 
 /*
 |--------------------------------------------------------------------------
@@ -76,7 +78,8 @@ Route::post('/bendahara/password', [BendaharaController::class, 'bendaharapasswo
 
 // Route for logging out
 Route::get('/bendahara/logout', [BendaharaController::class, 'bendaharalogout'])->name('bendahara.logout');
-Route::get('/bendahara', [BendaharaController::class, 'pemasukanindex'])->name('bendahara.pemasukan.index');
+Route::get('/bendahara/logs', [BendaharaController::class, 'bendaharalogs'])->name('bendahara.logs.index');
+Route::get('/bendahara', [BendaharaController::class, 'kategorimasukindex'])->name('bendahara.kategori_pemasukan.index');
 Route::get('/bendahara/pemasukan', [BendaharaController::class, 'pemasukanindex'])->name('bendahara.pemasukan.index');
 Route::get('/bendahara/pemasukan/create', [BendaharaController::class, 'pemasukancreate'])->name('bendahara.pemasukan.create');
 Route::post('/bendahara/pemasukan/store', [BendaharaController::class, 'pemasukanstore'])->name('bendahara.pemasukan.store');
@@ -91,6 +94,24 @@ Route::get('/bendahara/pengeluaran/{id}/edit', [BendaharaController::class, 'pen
 Route::put('/bendahara/pengeluaran/{id}/update', [BendaharaController::class, 'pengeluaranupdate'])->name('bendahara.pengeluaran.update');
 Route::get('/bendahara/pengeluaran/{id}/show', [BendaharaController::class, 'pengeluaranshow'])->name('bendahara.pengeluaran.show');
 Route::delete('/bendahara/pengeluaran/{id}/destroy', [BendaharaController::class, 'pengeluarandestroy'])->name('bendahara.pengeluaran.destroy');
+// Kategori Pemasukan
+Route::get('/bendahara/kategori-pemasukan', [BendaharaController::class, 'kategorimasukindex'])->name('bendahara.kategori_pemasukan.index');
+Route::get('/bendahara/kategori-pemasukan/jenis-pemasukan', [BendaharaController::class, 'bendaharajenispemasukan'])->name('bendahara.kategori_pemasukan.jenis_pemasukan');
+Route::get('/bendahara/kategori-pemasukan/create', [BendaharaController::class, 'kategorimasukcreate'])->name('bendahara.kategori_pemasukan.create');
+Route::post('/bendahara/kategori-pemasukan', [BendaharaController::class, 'kategorimasukstore'])->name('bendahara.kategori_pemasukan.store');
+Route::get('/bendahara/kategori-pemasukan/{id}/edit', [BendaharaController::class, 'kategorimasukedit'])->name('bendahara.kategori_pemasukan.edit');
+Route::put('/bendahara/kategori-pemasukan/{id}', [BendaharaController::class, 'kategorimasukupdate'])->name('bendahara.kategori_pemasukan.update');
+Route::delete('/bendahara/kategori-pemasukan/{id}', [BendaharaController::class, 'kategorimasukdestroy'])->name('bendahara.kategori_pemasukan.destroy');
+
+// Kategori Pengeluaran
+Route::get('/bendahara/kategori-pengeluaran', [BendaharaController::class, 'kategorikeluarindex'])->name('bendahara.kategori_pengeluaran.index');
+Route::get('/bendahara/kategori-pengeluaran/jenis-pengeluaran', [BendaharaController::class, 'bendaharajenispengeluaran'])->name('bendahara.kategori_pengeluaran.jenis_pengeluaran');
+Route::get('/bendahara/kategori-pengeluaran/create', [BendaharaController::class, 'kategorikeluarcreate'])->name('bendahara.kategori_pengeluaran.create');
+Route::post('/bendahara/kategori-pengeluaran', [BendaharaController::class, 'kategorikeluarstore'])->name('bendahara.kategori_pengeluaran.store');
+Route::get('/bendahara/kategori-pengeluaran/{id}/edit', [BendaharaController::class, 'kategorikeluaredit'])->name('bendahara.kategori_pengeluaran.edit');
+Route::put('/bendahara/kategori-pengeluaran/{id}', [BendaharaController::class, 'kategorikeluarupdate'])->name('bendahara.kategori_pengeluaran.update');
+Route::delete('/bendahara/kategori-pengeluaran/{id}', [BendaharaController::class, 'kategorikeluardestroy'])->name('bendahara.kategori_pengeluaran.destroy');
+
 /* --------------------------------- WARGA SEKOLAH --------------------------------- */
 
 Route::get('/pengunjung/register', [PengunjungController::class, 'pengunjungregister'])->name('pengunjung.register');
@@ -103,6 +124,9 @@ Route::get('/pengunjung/password', [PengunjungController::class, 'pengunjungpass
 Route::post('/pengunjung/password', [PengunjungController::class, 'pengunjungpassword_action'])->name('pengunjung.password.action');
 
 Route::post('/pengunjung/logout', [PengunjungController::class, 'pengunjunglogout'])->name('pengunjung.logout');
+
+/* Log */
+Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity_logs.index');
 
 /* ------------------------------- MIDDLEWARE ------------------------------- */
 Route::prefix('/')->middleware('auth')->group(function () {
@@ -123,7 +147,7 @@ Route::prefix('/')->middleware('auth')->group(function () {
     /* -------------------------------- Bendahara ------------------------------- */
     Route::middleware(['isBendahara'])->group(function () {
 
-      Route::get('/bendahara', [BendaharaController::class, 'pemasukanindex'])->name('bendahara.pemasukan.index');
+      Route::get('/bendahara', [BendaharaController::class, 'kategorimasukindex'])->name('bendahara.kategori_pemasukan.index');
       // return view('bendahara.login', $data);
     });
 
@@ -131,6 +155,7 @@ Route::prefix('/')->middleware('auth')->group(function () {
     Route::middleware(['KetuaDkmOrBendahara'])->group(function () {
       // pengeluaran
       Route::get('/pengeluaran', [PengeluaranKasController::class, 'index'])->name('pengeluaran.index');
+      Route::get('/pengeluaran_kas', [PengeluaranKasController::class, 'index'])->name('pengeluarankas.index');
       Route::get('/pengeluaran/create', [PengeluaranKasController::class, 'create'])->name('pengeluaran.create');
       Route::post('/pengeluaran', [PengeluaranKasController::class, 'store'])->name('pengeluaran.store');
       Route::get('/pengeluaran/{id}', [PengeluaranKasController::class, 'show'])->name('pengeluaran.show');
@@ -164,3 +189,45 @@ Route::prefix('/')->middleware('auth')->group(function () {
 // store prosedure
 Route::get("list-tbluser", [HomeController::class, "ListTblUser"]);
 Route::get("get-tbluser/{id}", [HomeController::class, "singleTblUser"]);
+
+
+// Routing untuk menampilkan semua kategori pengeluaran
+Route::get('/kategori-pemasukan', [KategoriPemasukanController::class, 'index'])->name('kategori_pemasukan.index');
+
+// Routing untuk menampilkan jenis pengeluaran
+Route::get('/jenis-pemasukan', [KategoriPemasukanController::class, 'jenispemasukan'])->name('kategori_pemasukan.jenis_pemasukan');
+
+// Routing untuk menampilkan form tambah kategori pengeluaran
+Route::get('/kategori-pemasukan/create', [KategoriPemasukanController::class, 'create'])->name('kategori_pemasukan.create');
+
+// Routing untuk menyimpan data kategori pengeluaran yang baru
+Route::post('/kategori-pemasukan', [KategoriPemasukanController::class, 'store'])->name('kategori_pemasukan.store');
+
+// Routing untuk menampilkan form edit kategori pengeluaran berdasarkan ID
+Route::get('/kategori-pemasukan/{id}/edit', [KategoriPemasukanController::class, 'edit'])->name('kategori_pemasukan.edit');
+
+// Routing untuk menyimpan perubahan pada kategori pengeluaran yang sudah ada
+Route::put('/kategori-pemasukan/{id}', [KategoriPemasukanController::class, 'update'])->name('kategori_pemasukan.update');
+
+// Routing untuk menghapus kategori pengeluaran berdasarkan ID
+Route::delete('/kategori-pemasukan/{id}', [KategoriPemasukanController::class, 'destroy'])->name('kategori_pemasukan.destroy');
+
+// Routing untuk menampilkan semua kategori pengeluaran
+Route::get('/kategori-pengeluaran', [KategoriPengeluaranController::class, 'index'])->name('kategori_pengeluaran.index');
+
+// Routing untuk menampilkan jenis pengeluaran
+Route::get('/jenis-pengeluaran', [KategoriPengeluaranController::class, 'jenispengeluaran'])->name('kategori_pengeluaran.jenis_pengeluaran');
+
+// Routing untuk menampilkan form tambah kategori pengeluaran
+Route::get('/kategori-pengeluaran/create', [KategoriPengeluaranController::class, 'create'])->name('kategori_pengeluaran.create');
+
+// Routing untuk menyimpan data kategori pengeluaran yang baru
+Route::post('/kategori-pengeluaran', [KategoriPengeluaranController::class, 'store'])->name('kategori_pengeluaran.store');
+
+// Routing untuk menampilkan form edit kategori pengeluaran berdasarkan ID
+Route::get('/kategori-pengeluaran/{id}/edit', [KategoriPengeluaranController::class, 'edit'])->name('kategori_pengeluaran.edit');
+// Routing untuk menyimpan perubahan pada kategori pengeluaran yang sudah ada
+Route::put('/kategori-pengeluaran/{id}', [KategoriPengeluaranController::class, 'update'])->name('kategori_pengeluaran.update');
+
+// Routing untuk menghapus kategori pengeluaran berdasarkan ID
+Route::delete('/kategori-pengeluaran/{id}', [KategoriPengeluaranController::class, 'destroy'])->name('kategori_pengeluaran.destroy');

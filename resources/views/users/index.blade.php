@@ -4,11 +4,13 @@
 <div class="container mt-5">
     <h1 class="text-center mb-4">User List</h1>
     <a href="{{ route('users.create') }}" class="btn btn-primary mb-3">Tambah Data User</a>
-    <form action="{{ route('users.index') }}" method="GET" class="mb-3">
-        <div class="input-group">
-            <input type="text" class="form-control" placeholder="Cari pengguna..." name="search">
-            <button type="submit" class="btn btn-outline-secondary">Cari</button>
+     <!-- Notifikasi -->
+     @if(Session::has('success'))
+        <div class="alert alert-success">
+            {{ Session::get('success') }}
         </div>
+    @endif
+    <form action="{{ route('users.index') }}" method="GET" class="mb-3">
     </form>
     <table class="table table-bordered">
         <thead>
@@ -45,11 +47,12 @@
                     <td class="align-middle">
                         <a href="{{ route('users.edit', $user->email_user) }}" class="btn btn-primary btn-sm">Edit</a>
                         <a href="{{ route('users.show', $user->email_user) }}" class="btn btn-info btn-sm">Detail</a>
-                        <form action="{{ route('users.destroy', $user->email_user) }}" method="POST" style="display: inline-block;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                        </form>
+                        <button type="button" class="btn btn-danger" onclick="confirmDelete('form{{ $user->email_user }}')">Hapus</button>
+
+<form id="form{{ $user->email_user }}" action="{{ route('users.destroy', $user->email_user) }}" method="POST" style="display: none;">
+    @csrf
+    @method('DELETE')
+</form>
                     </td>
                 </tr>
                 @php
@@ -58,10 +61,29 @@
             @endforeach
         </tbody>
     </table>
-
-    <!-- Paginasi untuk 5 data per halaman -->
-    <div class="d-flex justify-content-center">
-    {{ $users->onEachSide(5)->withQueryString()->withPath(url()->current())->links('pagination::bootstrap-4') }}
-    </div>
 </div>
+<!-- Tambahkan di head atau sebelum menutup </body> -->
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+<script>
+    // Fungsi untuk menampilkan SweetAlert saat menghapus data
+    function confirmDelete(formId) {
+        Swal.fire({
+            title: 'Apakah Anda yakin ingin menghapus?',
+            text: "Anda tidak dapat mengembalikan data yang telah dihapus!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById(formId).submit();
+            }
+        });
+    }
+</script>
+
 @endsection
+

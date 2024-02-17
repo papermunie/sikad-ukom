@@ -16,7 +16,6 @@ class AuthController extends Controller
         $data['title'] = 'Register';
         return view('user/register', $data);
     }
-
     public function register_action(Request $request)
     {
         $request->validate([
@@ -25,21 +24,29 @@ class AuthController extends Controller
             'foto_profil' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'role' => ['required', Rule::in(['ketua_dkm', 'bendahara', 'warga_sekolah'])],
         ]);
-
+    
         $user = new User([
             'email_user' => $request->email_user,
             'password' => Hash::make($request->password),
             'role' => $request->role,
         ]);
-
-        // Save profile picture to the storage
-        $path = $request->file('foto_profil')->store('public/foto_profil');
-        $user->foto_profil = str_replace('public/', '', $path);
-
+    
+        if ($request->hasFile('foto_profil') && $request->file('foto_profil')->isValid()) {
+            $foto_file = $request->file('foto_profil');
+    
+            // Membuat nama file foto profil dan menyimpannya ke dalam direktori publik
+            $foto_nama = md5($foto_file->getClientOriginalName() . time()) . '.' . $foto_file->getClientOriginalExtension();
+            $foto_file->move(public_path('foto_profil'), $foto_nama);
+    
+            // Menyimpan nama file foto profil ke dalam basis data
+            $user->foto_profil = $foto_nama;
+        }
+    
         $user->save();
-
+    
         return redirect()->route('login')->with('success', 'Registration success. Please login!');
     }
+    
 
     public function login()
     {
@@ -54,28 +61,29 @@ class AuthController extends Controller
     }
 
     public function login_action(Request $request)
-    {
-        $request->validate([
-            'email_user' => 'required',
-            'password' => 'required',
-        ]);
-    
-        // Ganti 'App\Models\User' dengan namespace yang sesuai jika perlu
-        $user = User::where('email_user', $request->email_user)->first();
-    
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return back()->withErrors([
-                'password' => 'Wrong email or password',
-            ]);
-        }
-    //login error trus dibenerin disini
+{
+    $request->validate([
+        'email_user' => 'required',
+        'password' => 'required',
+    ]);
+
+    // Temukan pengguna berdasarkan email
+    $user = User::where('email_user', $request->email_user)->first();
+
+    // Periksa apakah pengguna ada dan kata sandinya cocok
+    if ($user && Hash::check($request->password, $user->password)) {
+        // Login pengguna
         Auth::login($user);
-        $request->session()->regenerate();
-    
-        // Menggunakan intended untuk mengarahkan pengguna ke halaman yang dimaksud setelah login
+
+        // Jika login berhasil, arahkan ke halaman yang dimaksud
         return redirect()->intended('/users');
+    } else {
+        // Jika pengguna tidak ditemukan atau kata sandi salah, kembalikan pesan kesalahan
+        return back()->withErrors([
+            'email_user' => 'Wrong email or password',
+        ]);
     }
-    
+}
 
     public function password()
     {

@@ -6,19 +6,22 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $search = $request->input('search');
+        // $search = $request->input('search');
 
-        $users = User::query()
-            ->when($search, function ($query) use ($search) {
-                $query->where('email_user', 'like', '%' . $search . '%')
-                    ->orWhere('role', 'like', '%' . $search . '%');
-            })
-            ->paginate(5);
+        // $users = User::query()
+        //     ->when($search, function ($query) use ($search) {
+        //         $query->where('email_user', 'like', '%' . $search . '%')
+        //             ->orWhere('role', 'like', '%' . $search . '%');
+        //     })
+        //     ->paginate(5);
+
+        $users = DB::select('CALL prosedur_show_user()');
     
         return view('users.index', compact('users'));
     }

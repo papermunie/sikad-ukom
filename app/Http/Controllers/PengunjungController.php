@@ -29,22 +29,28 @@ class PengunjungController extends Controller
             'foto_profil' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'role' => ['required', Rule::in(['ketua_dkm', 'bendahara', 'warga_sekolah'])],
         ]);
-
+    
         $user = new User([
             'email_user' => $request->email_user,
             'password' => Hash::make($request->password),
             'role' => $request->role,
         ]);
-
-        // Save profile picture to the storage
-        $path = $request->file('foto_profil')->store('public/foto_profil');
-        $user->foto_profil = str_replace('public/', '', $path);
-
+    
+        if ($request->hasFile('foto_profil') && $request->file('foto_profil')->isValid()) {
+            $foto_file = $request->file('foto_profil');
+    
+            // Membuat nama file foto profil dan menyimpannya ke dalam direktori publik
+            $foto_nama = md5($foto_file->getClientOriginalName() . time()) . '.' . $foto_file->getClientOriginalExtension();
+            $foto_file->move(public_path('foto_profil'), $foto_nama);
+    
+            // Menyimpan nama file foto profil ke dalam basis data
+            $user->foto_profil = $foto_nama;
+        }
+    
         $user->save();
-
+    
         return redirect()->route('pengunjung.login')->with('success', 'Registration success. Please login!');
     }
-
     public function pengunjunglogin()
     {
         $data['title'] = 'Login';
@@ -128,7 +134,7 @@ class PengunjungController extends Controller
     }
 
     public function laporanmasuk(){
-        $pemasukanKas = PemasukanKas::all();
+        $pemasukanKas = PemasukanKas::latest()->paginate(10);
         return view('pengunjung.laporanmasuk', compact('pemasukanKas'));
     }
 

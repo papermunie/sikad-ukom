@@ -9,10 +9,6 @@
     <form action="{{ route('bendahara.pengeluaran.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
-        <div class="mb-3">
-            <label for="kode_pengeluaran" class="form-label">Kode pengeluaran:</label>
-            <input type="string" class="form-control" id="kode_pengeluaran" name="kode_pengeluaran" required>
-        </div>
 
         <div class="mb-3">
             <label for="jenis_pengeluaran" class="form-label">Jenis pengeluaran:</label>

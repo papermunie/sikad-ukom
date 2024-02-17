@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container mt-4">
+    <div class="container mt-4" style="color: #A0A0F3;">
         <h2>Edit pengeluaran</h2>
 
         <form action="{{ route('pengeluaran.update', $pengeluaran->kode_pengeluaran) }}" enctype="multipart/form-data" method="POST">

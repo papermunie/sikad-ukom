@@ -3,11 +3,7 @@
 @section('title', 'Log Activity')
 
 @section('content')
-    <div class="row">
-        <div class="col d-flex justify-content-between mb-2">
-            <a class="btn btn-gradient" href="{{ url('/dashboard') }}"> Kembali</a>
-        </div>
-    </div>
+<div class="container mt-4">
     <div class="row justify-content-center ">
         <div class="col-md">
             <div class="card">
@@ -16,6 +12,7 @@
                         <thead>
                             <tr>
                                 <th>Log ID</th>
+                                <th>Auth</th>
                                 <th>Entity</th>
                                 <th>Entity ID</th>
                                 <th>Action</th>
@@ -26,6 +23,7 @@
                             @foreach($logs as $log)
                                 <tr>
                                     <td>{{ $log->id }}</td>
+                                    <td>{{ $log->auth }}</td>
                                     <td>{{ $log->entity }}</td>
                                     <td>{{ $log->entity_id }}</td>
                                     <td>{{ $log->action }}</td>
@@ -34,6 +32,9 @@
                             @endforeach
                         </tbody>
                     </table>
+                    <div class="d-flex justify-content-center">
+                        {{ $logs->links('pagination::bootstrap-5') }}
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,7 +1,7 @@
 @extends('layout_bendahara.app')
 
 @section('content')
-    <div class="container mt-4">
+    <div class="container mt-4" style="color: #A0A0F3;">
         <h2>Edit pemasukan</h2>
 
         <form action="{{ route('bendahara.pemasukan.update', $pemasukan->kode_pemasukan) }}" enctype="multipart/form-data"
@@ -34,6 +34,5 @@
             <button type="submit" class="btn btn-primary">Simpan</button>
             <a href="{{ route('bendahara.pemasukan.index') }}" class="btn btn-secondary">Batal</a>
         </form>
-        @endsection
-
-
+    </div>
+@endsection

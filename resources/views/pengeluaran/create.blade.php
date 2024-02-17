@@ -10,11 +10,6 @@
         @csrf
 
         <div class="mb-3">
-            <label for="kode_pengeluaran" class="form-label">Kode pengeluaran:</label>
-            <input type="string" class="form-control" id="kode_pengeluaran" name="kode_pengeluaran" required>
-        </div>
-
-        <div class="mb-3">
             <label for="jenis_pengeluaran" class="form-label">Jenis pengeluaran:</label>
             <input type="string" class="form-control" id="jenis_pengeluaran" name="jenis_pengeluaran" required>
         </div>

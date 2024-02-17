@@ -5,7 +5,7 @@
 @section('content')
 <div class="container mt-5">
     <h1 class="mb-4">Tambah Pengeluaran Kas</h1>
-    <form action="{{ route('pengeluaran_kas.store') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('pengeluaran.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="mb-3">
             <label for="kode_pengeluaran" class="form-label">Kode Pengeluaran:</label>

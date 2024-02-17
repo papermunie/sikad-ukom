@@ -25,6 +25,7 @@
                 <label for="password" class="form-label">Password:</label>
                 <input type="password" class="form-control" id="password" name="password" value="{{ $user->password }}" required>
             </div>
+            
 
             <div class="mb-3">
                 <label for="foto_profil" class="form-label">Profile Picture:</label>

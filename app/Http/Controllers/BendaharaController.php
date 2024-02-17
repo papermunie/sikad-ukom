@@ -5,8 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\PemasukanKas;
 use App\Models\PengeluaranKas;
 use App\Models\User;
+use App\Models\KategoriPemasukan;
+use App\Models\KategoriPengeluaran;
+use App\Models\ActivityLog;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
@@ -28,27 +32,30 @@ class BendaharaController extends Controller
     }
 
     public function bendaharalogin_action(Request $request)
-    {
-        $request->validate([
-            'email_user' => 'required',
-            'password' => 'required',
-        ]);
-    
-        // Ganti 'App\Models\User' dengan namespace yang sesuai jika perlu
-        $user = User::where('email_user', $request->email_user)->first();
-    
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return back()->withErrors([
-                'password' => 'Wrong email or password',
-            ]);
-        }
-    //login error trus dibenerin disini
+{
+    $request->validate([
+        'email_user' => 'required',
+        'password' => 'required',
+    ]);
+
+    // Temukan pengguna berdasarkan email
+    $user = User::where('email_user', $request->email_user)->first();
+
+    // Periksa apakah pengguna ada dan kata sandinya cocok
+    if ($user && Hash::check($request->password, $user->password)) {
+        // Login pengguna
         Auth::login($user);
-        $request->session()->regenerate();
-    
-        // Menggunakan intended untuk mengarahkan pengguna ke halaman yang dimaksud setelah login
+
+        // Jika login berhasil, arahkan ke halaman yang dimaksud
         return redirect()->intended('/bendahara');
+    } else {
+        // Jika pengguna tidak ditemukan atau kata sandi salah, kembalikan pesan kesalahan
+        return back()->withErrors([
+            'email_user' => 'Wrong email or password',
+        ]);
     }
+}
+
     
 
     public function bendaharapassword()
@@ -86,21 +93,30 @@ class BendaharaController extends Controller
         $request->session()->regenerateToken();
         return redirect('/');
     }
+    public function bendaharalogs()
+    {
+        $logs = ActivityLog::latest()->paginate(10);
 
+        return view('bendahara.logs.index', compact('logs'));
+    }
     public function pemasukanindex(Request $request)
-        {
-            $search = $request->input('search');
-            
-            $pemasukan = PemasukanKas::when($search, function ($query) use ($search) {
-                    $query->where('kode_pemasukan', 'like', '%' . $search . '%')
-                        ->orWhere('jenis_pemasukan', 'like', '%' . $search . '%')
-                        ->orWhere('tanggal_pemasukan', 'like', '%' . $search . '%')
-                        ->orWhere('jumlah_pemasukan', 'like', '%' . $search . '%');
-                })
-                ->get();
-        
-            return view('bendahara.pemasukan.index', compact('pemasukan'));
-        }
+    {
+        $search = $request->input('search');
+
+        $pemasukan = PemasukanKas::query()
+        ->when($search, function ($query) use ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('jenis_pemasukan', 'like', '%' . $search . '%')
+                    ->orWhere('jumlah_pemasukan', 'like', '%' . $search . '%')
+                    ->orWhereDate('tanggal_pemasukan', 'like', '%' . $search . '%')
+                    ->orWhere('kode_pemasukan', 'like', '%' . $search . '%');
+            });
+        })
+        ->paginate(5);
+    
+    
+        return view('bendahara.pemasukan.index', compact('pemasukan'));
+    }
         
     
         public function pemasukancreate()
@@ -111,12 +127,15 @@ class BendaharaController extends Controller
         {
     
             $validatedData = $request->validate([
-                'kode_pemasukan' => 'required|unique:pemasukan_kas',
                 'jenis_pemasukan' => 'required|in:Amal Harian,Sumbangan,Infaq',
                 'tanggal_pemasukan' => 'required|date',
                 'jumlah_pemasukan' => 'required',
                 'dokumentasi' => 'file',
             ]);
+    
+            $kode = DB::select('SELECT generate_pemasukan() AS kode_pemasukan')[0]->kode_pemasukan;
+            $validatedData['kode_pemasukan'] = $kode;
+            
     
             if ($request->hasFile('dokumentasi') && $request->file('dokumentasi')->isValid()) {
                 $foto_file = $request->file('dokumentasi');
@@ -134,8 +153,9 @@ class BendaharaController extends Controller
             PemasukanKas::create($validatedData);
     
     
-            return redirect()->route('bendahara.pemasukan.index')->with('success', 'pemasukan berhasil ditambahkan');
+            return redirect()->route('bendahara.pemasukan.index')->with('success', 'Pemasukan berhasil ditambahkan');
         }
+
         public function pemasukanedit($id)
         {
             $pemasukan = PemasukanKas::findOrFail($id);
@@ -198,13 +218,16 @@ class BendaharaController extends Controller
     {
         $search = $request->input('search');
         
-        $pengeluaran = PengeluaranKas::when($search, function ($query) use ($search) {
-                $query->where('kode_pengeluaran', 'like', '%' . $search . '%')
-                    ->orWhere('jenis_pengeluaran', 'like', '%' . $search . '%')
-                    ->orWhere('tanggal_pengeluaran', 'like', '%' . $search . '%')
-                    ->orWhere('jumlah_pengeluaran', 'like', '%' . $search . '%');
-            })
-            ->get();
+        $pengeluaran = PengeluaranKas::query()
+        ->when($search, function ($query) use ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('jenis_pengeluaran', 'like', '%' . $search . '%')
+                    ->orWhere('jumlah_pengeluaran', 'like', '%' . $search . '%')
+                    ->orWhereDate('tanggal_pengeluaran', 'like', '%' . $search . '%')
+                    ->orWhere('kode_pengeluaran', 'like', '%' . $search . '%');
+            });
+        })
+        ->paginate(5);
     
         return view('bendahara.pengeluaran.index', compact('pengeluaran'));
     }
@@ -219,11 +242,13 @@ class BendaharaController extends Controller
     {
 
         $validatedData = $request->validate([
-            'kode_pengeluaran' => 'required|unique:pengeluaran_kas',
             'jenis_pengeluaran' => 'required',
             'tanggal_pengeluaran' => 'required|date',
             'jumlah_pengeluaran' => 'required',
         ]);
+
+        $kode = DB::select('SELECT generate_pengeluaran() AS kode_pengeluaran')[0]->kode_pengeluaran;
+        $validatedData['kode_pengeluaran'] = $kode;
 
         // kemudian simpan ke dalam database
         PengeluaranKas::create($validatedData);
@@ -283,6 +308,180 @@ public function pengeluarandestroy($id)
         $pengeluaran->delete();
         return redirect()->route('bendahara.pengeluaran.index')->with('success', 'pengeluaran berhasil dihapus');
     }
-    
+
+    public function kategorimasukindex()
+    {
+       $kategoriPemasukan = KategoriPemasukan::all();
+        return view('bendahara.kategori_pemasukan.index', compact('kategoriPemasukan'));
+    }
+    public function bendaharajenispemasukan()
+    {
+        $kategoriPemasukan = KategoriPemasukan::latest()->paginate(5);
+        return view('bendahara.kategori_pemasukan.jenis_pemasukan', compact('kategoriPemasukan'));
+    }
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function kategorimasukcreate()
+    {
+        return view('bendahara.kategori_pemasukan.create');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function kategorimasukstore(Request $request)
+    {
+        $request->validate([
+            'id_kategori_pemasukan' => 'required|string|max:5|unique:kategori_pemasukan',
+            'jenis_pemasukan' => 'required|string|max:40',
+        ]);
+
+        KategoriPemasukan::create($request->all());
+
+        return redirect()->route('bendahara.kategori_pemasukan.jenis_pemasukan')
+            ->with('success', 'Kategori Pemasukan berhasil ditambahkan.');
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function kategorimasukedit($id)
+    {
+       $kategoriPemasukan = KategoriPemasukan::findOrFail($id);
+        return view('bendahara.kategori_pemasukan.edit', compact('kategoripemasukan'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function kategorimasukupdate(Request $request, $id)
+    {
+        $request->validate([
+            'jenis_pemasukan' => 'required|string|max:40',
+        ]);
+
+       $kategoriPemasukan = KategoriPemasukan::findOrFail($id);
+       $kategoriPemasukan->update($request->all());
+
+        return redirect()->route('bendahara.kategori_pemasukan.jenis_pemasukan')
+            ->with('success', 'Kategori Pemasukan berhasil diperbarui.');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function kategorimasukdestroy($id)
+    {
+       $kategoriPemasukan = KategoriPemasukan::findOrFail($id);
+       $kategoriPemasukan->delete();
+
+        return redirect()->route('bendahara.kategori_pemasukan.jenis_pemasukan')
+            ->with('success', 'Kategori Pemasukan berhasil dihapus.');
+    }
+    public function kategorikeluarindex()
+    {
+        $kategoriPengeluaran = KategoriPengeluaran::all();
+        return view('bendahara.kategori_pengeluaran.index', compact('kategoriPengeluaran'));
+    }
+    public function bendaharajenispengeluaran()
+    {
+         $kategoriPengeluaran = KategoriPengeluaran::latest()->paginate(5);
+        return view('bendahara.kategori_pengeluaran.jenis_pengeluaran', compact('kategoriPengeluaran'));
+    }
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function kategorikeluarcreate()
+    {
+        return view('bendahara.kategori_pengeluaran.create');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function kategorikeluarstore(Request $request)
+    {
+        $request->validate([
+            'id_kategori_pengeluaran' => 'required|string|max:5|unique:kategori_pengeluaran',
+            'jenis_pengeluaran' => 'required|string|max:40',
+        ]);
+
+        KategoriPengeluaran::create($request->all());
+
+        return redirect()->route('bendahara.kategori_pengeluaran.jenis_pengeluaran')
+            ->with('success', 'Kategori pengeluaran berhasil ditambahkan.');
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function kategorikeluaredit($id)
+    {
+        $kategoriPengeluaran = KategoriPengeluaran::findOrFail($id);
+        return view('bendahara.kategori_pengeluaran.edit', compact('kategoriPengeluaran'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function kategorikeluarupdate(Request $request, $id)
+    {
+        $request->validate([
+            'jenis_pengeluaran' => 'required|string|max:40',
+        ]);
+
+        $kategoriPengeluaran = KategoriPengeluaran::findOrFail($id);
+        $kategoriPengeluaran->update($request->all());
+
+        return redirect()->route('bendahara.kategori_pengeluaran.jenis_pengeluaran')
+            ->with('success', 'Kategori pengeluaran berhasil diperbarui.');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function kategorikeluardestroy($id)
+    {
+        $kategoriPengeluaran = KategoriPengeluaran::findOrFail($id);
+        $kategoriPengeluaran->delete();
+
+        return redirect()->route('bendahara.kategori_pengeluaran.jenis_pengeluaran')
+            ->with('success', 'Kategori pengeluaran berhasil dihapus.');
+    }
+
+
 }
+
+    
         

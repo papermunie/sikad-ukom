@@ -12,7 +12,7 @@
 
     <form action="{{ route('bendahara.pengeluaran.index') }}" method="GET" class="mb-3">
         <div class="input-group">
-            <input type="text" class="form-control" placeholder="Cari pengguna..." name="search">
+            <input type="text" class="form-control" placeholder="Cari data pengeluaran..." name="search" value="{{ request('search') }}">
             <button type="submit" class="btn btn-outline-secondary">Cari</button>
         </div>
     </form>
@@ -37,15 +37,13 @@
                 <td>
                     <a href="{{ route('bendahara.pengeluaran.show', $data->kode_pengeluaran) }}" class="btn btn-info">Detail</a>
                     <a href="{{ route('bendahara.pengeluaran.edit', $data->kode_pengeluaran) }}" class="btn btn-warning">Edit</a>
-                    <form action="{{ route('bendahara.pengeluaran.destroy', $data->kode_pengeluaran) }}" method="POST" style="display: inline-block;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus?')">Hapus</button>
-                    </form>
                 </td>
             </tr>
             @endforeach
         </tbody>
     </table>
+    <div class="d-flex justify-content-center">
+        {{ $pengeluaran->links('pagination::bootstrap-5') }}
+    </div>
 </div>
 @endsection

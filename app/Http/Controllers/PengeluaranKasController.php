@@ -6,19 +6,24 @@ use App\Models\PengeluaranKas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\DB;
 class PengeluaranKasController extends Controller
 {
     public function index(Request $request)
     {
+       
         $search = $request->input('search');
-        
-        $pengeluaran = PengeluaranKas::when($search, function ($query) use ($search) {
-                $query->where('kode_pengeluaran', 'like', '%' . $search . '%')
-                    ->orWhere('jenis_pengeluaran', 'like', '%' . $search . '%')
-                    ->orWhere('tanggal_pengeluaran', 'like', '%' . $search . '%')
-                    ->orWhere('jumlah_pengeluaran', 'like', '%' . $search . '%');
-            })
-            ->get();
+
+        $pengeluaran = PengeluaranKas::query()
+        ->when($search, function ($query) use ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('jenis_pengeluaran', 'like', '%' . $search . '%')
+                    ->orWhere('jumlah_pengeluaran', 'like', '%' . $search . '%')
+                    ->orWhereDate('tanggal_pengeluaran', 'like', '%' . $search . '%')
+                    ->orWhere('kode_pengeluaran', 'like', '%' . $search . '%');
+            });
+        })
+        ->paginate(5);
     
         return view('pengeluaran.index', compact('pengeluaran'));
     }
@@ -33,12 +38,16 @@ class PengeluaranKasController extends Controller
     {
 
         $validatedData = $request->validate([
-            'kode_pengeluaran' => 'required|unique:pengeluaran_kas',
+            // 'kode_pengeluaran' => 'required|unique:pengeluaran_kas',
             'jenis_pengeluaran' => 'required',
             'tanggal_pengeluaran' => 'required|date',
             'jumlah_pengeluaran' => 'required',
             'dokumentasi' => 'file',
         ]);
+
+        $kode = DB::select('SELECT generate_pengeluaran() AS kode_pengeluaran')[0]->kode_pengeluaran;
+        $validatedData['kode_pengeluaran'] = $kode;
+
 
         if ($request->hasFile('dokumentasi') && $request->file('dokumentasi')->isValid()) {
             $foto_file = $request->file('dokumentasi');

@@ -110,10 +110,10 @@
                           <b>  <a class="nav-link" href="{{ route('users.index') }}">User</a></b>
                         </li>
                         <li class="nav-item">
-                           <b> <a class="nav-link" href="{{ route('pemasukan.index') }}">Pemasukan</a> </b>
+                           <b> <a class="nav-link" href="{{ route('kategori_pemasukan.index') }}">Pemasukan</a> </b>
                         </li>
                         <li class="nav-item">
-                         <b>   <a class="nav-link" href="{{ route('pengeluaran.index') }}">Pengeluaran</a></b>
+                         <b>   <a class="nav-link" href="{{ route('kategori_pengeluaran.index') }}">Pengeluaran</a></b>
                         </li>
                         <li class="nav-item"> 
                           <b> <a class="nav-link" href="{{ route('activity_logs.index') }}">Logs</a></b>

@@ -25,8 +25,8 @@
                         </tr>
                         <tr>
                             <th scope="row">Password</th>
-                            <td>{{ $user->password }}</td>
-                        </tr>
+                            <td>{{ str_repeat('*', strlen($user->password)) }}</td>
+                        </tr>                        
                         <tr>
                             <th scope="row">Role</th>
                             <td>{{ $user->role }}</td>

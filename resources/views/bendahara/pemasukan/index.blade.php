@@ -9,10 +9,14 @@
             <button onclick="window.print()" class="btn btn-secondary">Cetak</button>
         </div>
     </div>
-
+    @if(Session::has('success'))
+    <div class="alert alert-success">
+        {{ Session::get('success') }}
+    </div>
+@endif
     <form action="{{ route('bendahara.pemasukan.index') }}" method="GET" class="mb-3">
         <div class="input-group">
-            <input type="text" class="form-control" placeholder="Cari pengguna..." name="search">
+            <input type="text" class="form-control" placeholder="Cari data pemasukan..." name="search" value="{{ request('search') }}">
             <button type="submit" class="btn btn-outline-secondary">Cari</button>
         </div>
     </form>
@@ -44,5 +48,8 @@
             @endforeach
         </tbody>
     </table>
+    <div class="d-flex justify-content-center">
+        {{ $pemasukan->links('pagination::bootstrap-5') }}
+    </div>
 </div>
 @endsection

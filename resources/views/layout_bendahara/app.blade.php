@@ -88,13 +88,13 @@
                 <ul class="navbar-nav justify-content-center">
                   
                         <li class="nav-item">
-                           <b> <a class="nav-link" href="{{ route('bendahara.pemasukan.index') }}">Pemasukan</a> </b>
+                           <b> <a class="nav-link" href="{{ route('bendahara.kategori_pemasukan.index') }}">Pemasukan</a> </b>
                         </li>
                         <li class="nav-item">
-                         <b>   <a class="nav-link" href="{{ route('bendahara.pengeluaran.index') }}">Pengeluaran</a></b>
+                         <b>   <a class="nav-link" href="{{ route('bendahara.kategori_pengeluaran.index') }}">Pengeluaran</a></b>
                         </li>
                         <li class="nav-item"> 
-                            <li> <b> <a class="nav-link" href="{{ route('activity_logs.index') }}">Logs</a></b>
+                            <li> <b> <a class="nav-link" href="{{ route('bendahara.logs.index') }}">Logs</a></b>
                         </li>
                     </ul>
                     @if(Auth::check()) <!-- Cek apakah pengguna sedang login -->
@@ -136,7 +136,7 @@
 
     <div id="app">
         @yield('content')
-
+    
     </div>
 
    

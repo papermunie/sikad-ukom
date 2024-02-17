@@ -9,11 +9,6 @@
         @csrf
 
         <div class="mb-3">
-            <label for="kode_pemasukan" class="form-label">Kode pemasukan:</label>
-            <input type="string" class="form-control" id="kode_pemasukan" name="kode_pemasukan" required>
-        </div>
-
-        <div class="mb-3">
             <label for="jenis_pemasukan" class="form-label">Jenis pemasukan:</label>
             <select class="form-select" id="jenis_pemasukan" name="jenis_pemasukan" required>
                 <option value="Amal Harian">Amal Harian</option>

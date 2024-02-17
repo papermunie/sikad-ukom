@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('kategori_pemasukan', function (Blueprint $table) {
             $table->char('id_kategori_pemasukan', 5)->primary();
             $table->string('jenis_pemasukan', 40);
+            $table->timestamps();
         });
     }
 
